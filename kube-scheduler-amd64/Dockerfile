@@ -1,2 +1,2 @@
 FROM gcr.io/google_containers/kube-scheduler-amd64:v1.12.2
-MAINTAINER yimingwu <yimingwu@hotmail.com>
+LABEL maintainer "yimingwu <yimingwu@hotmail.com>"

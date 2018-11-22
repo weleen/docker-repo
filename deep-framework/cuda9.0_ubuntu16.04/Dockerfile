@@ -1,0 +1,92 @@
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+LABEL maintainer "yimingwu <yimingwu@hotmail.com>"
+
+ARG TENSORFLOW_VERSION=latest
+ARG PYTORCH_VERSION=latest
+ARG MXNET_VERSION=latest
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /usr/local/bin:$PATH
+
+#RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
+#	cat /proc/driver/nvidia/version && \
+#	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
+#	nvcc -V && \
+#	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
+
+# Install some dependencies
+RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
+    PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    GIT_CLONE="git clone --depth 10" && \
+    rm -rf /var/lib/apt/lists/* \
+           /etc/apt/sources.list.d/cuda.list \
+           /etc/apt/sources.list.d/nvidia-ml.list && \
+    apt-get update --fix-missing && \
+# ==================================================================
+# tools
+# ------------------------------------------------------------------
+    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip build-essential libglib2.0-0 libxext6 libsm6 libxrender1 grep dpkg
+# ==================================================================
+# python
+# ------------------------------------------------------------------
+RUN $APT_INSTALL software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    $APT_INSTALL python3.6 python3.6-dev && \
+    wget -O ~/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    python3.6 ~/get-pip.py && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+# ==================================================================
+# misc
+# ------------------------------------------------------------------
+    $PIP_INSTALL setuptools numpy scipy pandas cloudpickle scikit-learn matplotlib Cython sklearn scikit-image yaml json easydict argparse Pillow PIL image
+# ==================================================================
+# boost
+# ------------------------------------------------------------------
+RUN wget -O ~/boost.tar.gz https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz && \
+    tar -zxf ~/boost.tar.gz -C ~ && \
+    cd ~/boost_* && \
+    ./bootstrap.sh --with-python=python3.6 && \
+    ./b2 install --prefix=/usr/local
+# ==================================================================
+# opencv
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL opencv-python
+# ==================================================================
+# jupyter
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL jupyter
+# ==================================================================
+# mxnet
+# ------------------------------------------------------------------
+RUN $APT_INSTALL libatlas-base-dev graphviz && \
+    $PIP_INSTALL mxnet-cu90 graphviz mxboard
+# ==================================================================
+# pytorch
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL torch torchvision tensorboardX
+# ==================================================================
+# tensorflow
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL tensorflow-gpu
+# ==================================================================
+# config & cleanup
+# ------------------------------------------------------------------
+RUN ldconfig && \
+	apt-get clean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* ~/*
+
+# Set up notebook config
+COPY jupyter_notebook_config.py /root/.jupyter/
+
+# Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
+COPY run_jupyter.sh /root/
+
+# Expose Ports for TensorBoard (6008), Ipython (8890)
+EXPOSE 6008 8890
+
+WORKDIR "/root"
+CMD ["/bin/bash"]

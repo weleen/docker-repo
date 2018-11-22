@@ -1,2 +1,2 @@
 FROM quay.io/coreos/flannel:v0.10.0-amd64
-MAINTAINER yimingwu <yimingwu@hotmail.com>
+LABEL maintainer "yimingwu <yimingwu@hotmail.com>"
