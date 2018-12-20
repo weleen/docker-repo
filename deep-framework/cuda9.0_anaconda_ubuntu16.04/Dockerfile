@@ -24,7 +24,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion && \
+    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client && \
 # ==================================================================
 # anaconda3
 # ------------------------------------------------------------------
@@ -68,11 +68,14 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # Set up notebook config
 COPY jupyter_notebook_config.py /root/.jupyter/
 
+# Set up ssh server
+COPY sshd_config /etc/ssh/
+
 # Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
-COPY run_jupyter.sh /root/
+COPY run.sh /root/
 
-# Expose Ports for TensorBoard (6008), Ipython (8890)
-EXPOSE 6008 8890
+# Expose Ports for ssh (22), TensorBoard (6008), Ipython (8890)
+EXPOSE 22 6008 8890
 
-WORKDIR "/root"
-CMD ["/bin/bash"]
+WORKDIR /root
+CMD ["/bin/bash", "run.sh"]

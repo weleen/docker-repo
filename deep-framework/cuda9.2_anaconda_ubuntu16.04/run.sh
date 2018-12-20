@@ -14,4 +14,8 @@
 # limitations under the License.
 # ==============================================================================
 
+# set passwd and start ssh server
+echo -e "root\nroot" | passwd root
+service ssh restart
+# start jupyter notebook
 nohup jupyter notebook --allow-root &
