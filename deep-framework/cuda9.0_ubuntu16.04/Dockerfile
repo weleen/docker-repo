@@ -85,8 +85,9 @@ COPY sshd_config /etc/ssh/
 # Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
 COPY run.sh /root/
 
+ENTRYPOINT [ "/bin/bash", "run.sh" ]
 # Expose Ports for ssh (22), TensorBoard (6008), Ipython (8890)
 EXPOSE 22 6008 8890
 
 WORKDIR /root
-CMD ["/bin/bash", "run.sh"]
+CMD ["/bin/bash"]
