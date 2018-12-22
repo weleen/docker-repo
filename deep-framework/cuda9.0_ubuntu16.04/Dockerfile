@@ -63,11 +63,15 @@ RUN rm -rf /var/lib/apt/lists/* \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-	$PIP_INSTALL torch torchvision tensorboardX && \
+	$PIP_INSTALL torch torchvision tensorboard && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
 	$PIP_INSTALL tensorflow-gpu && \
+# ==================================================================
+# extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
+# ------------------------------------------------------------------
+    $PIP_INSTALL tensorboardX protobuf==3.6.0 pip easydict Cython && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
@@ -85,7 +89,7 @@ COPY sshd_config /etc/ssh/
 # Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
 COPY run.sh /root/
 
-ENTRYPOINT [ "/bin/bash", "run.sh" ]
+# ENTRYPOINT [ "/bin/bash", "run.sh", " && "]
 # Expose Ports for ssh (22), TensorBoard (6008), Ipython (8890)
 EXPOSE 22 6008 8890
 
