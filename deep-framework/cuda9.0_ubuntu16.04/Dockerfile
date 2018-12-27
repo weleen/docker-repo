@@ -59,7 +59,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 # mxnet
 # ------------------------------------------------------------------
 	$APT_INSTALL libatlas-base-dev graphviz && \
-    $PIP_INSTALL mxnet-cu90 graphviz mxboard && \
+    $PIP_INSTALL mxnet-cu90 graphviz mxboard gluoncv && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------

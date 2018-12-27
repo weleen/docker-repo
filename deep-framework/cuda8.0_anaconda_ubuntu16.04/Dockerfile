@@ -52,7 +52,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # mxnet
 # ------------------------------------------------------------------
     conda install -y graphviz && \
-    pip install mxnet-cu80 mxboard && \
+    pip install mxnet-cu80 mxboard graphviz gluoncv && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
