@@ -6,6 +6,7 @@ ARG PYTORCH_VERSION=latest
 ARG MXNET_VERSION=latest
 ARG DEBIAN_FRONTEND=noninteractive 
 
+ENV JUPYTER_CONFIG_DIR=/opt/jupyter
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/anaconda3/bin:$PATH
 
@@ -56,23 +57,24 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
-    pip install --upgrade tensorboardX protobuf==3.6.0 pip easydict Cython && \
+    pip install --upgrade tensorboardX protobuf==3.6.0 pip easydict Cython cupy && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
     ldconfig && \
 	apt-get clean && \
     apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* ~/*
-
-# Set up notebook config
-COPY jupyter_notebook_config.py /root/.jupyter/
-
-# Set up ssh server
+    rm -rf /var/lib/apt/lists/* /tmp/* ~/* && \
+# ==================================================================
+# jupyter notebook
+# ------------------------------------------------------------------
+    mkdir /opt/jupyter
+COPY jupyter_notebook_config.py /opt/jupyter
+# ==================================================================
+# ssh server
+# ------------------------------------------------------------------
 COPY sshd_config /etc/ssh/
-
-# Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
-COPY run.sh /root/
+COPY run.sh /opt
 
 # ENTRYPOINT [ "/bin/bash", "run.sh", " && "]
 # Expose Ports for ssh (22), TensorBoard (6008), Ipython (8890)

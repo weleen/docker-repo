@@ -19,3 +19,5 @@ echo -e "root\nroot" | passwd root
 service ssh restart
 # start jupyter notebook
 nohup jupyter notebook --allow-root &
+# fix bug in matplotlib
+sed -i "41s/.*/backend      : TkAgg/" $(python -c 'import matplotlib;print(matplotlib.matplotlib_fname())')
