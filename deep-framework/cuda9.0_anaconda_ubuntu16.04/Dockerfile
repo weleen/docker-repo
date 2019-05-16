@@ -1,7 +1,8 @@
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 LABEL maintainer "yimingwu <yimingwu@hotmail.com>"
 
-ARG TENSORFLOW_VERSION=1.9.0
+# maximum supported tensorflow is 1.12.0 with CUDA9.0
+ARG TENSORFLOW_VERSION=1.12.0
 ARG PYTORCH_VERSION=latest
 ARG MXNET_VERSION=latest
 ARG DEBIAN_FRONTEND=noninteractive 
@@ -9,6 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV JUPYTER_CONFIG_DIR=/opt/jupyter
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/anaconda3/bin:$PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
 #RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
 #	cat /proc/driver/nvidia/version && \
@@ -25,7 +27,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client && \
+    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client tree && \
 # ==================================================================
 # anaconda3
 # ------------------------------------------------------------------
@@ -57,7 +59,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
-    pip install --upgrade tensorboardX protobuf==3.6.0 pip easydict Cython cupy && \
+    pip install --upgrade tensorboardX protobuf==3.6.0 pip easydict Cython cupy yacs && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
