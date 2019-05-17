@@ -19,6 +19,8 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
 # Install some dependencies
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
+    PIP_INSTALL="pip install --no-cache-dir" && \
+    CONDA_INSTALL="conda install -y" && \
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
@@ -30,7 +32,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # miniconda4 python3.6.5
 # ------------------------------------------------------------------
-    wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
+    wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/miniconda && \
     rm ~/miniconda.sh && \
     ln -s /opt/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -39,30 +41,29 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get install -y curl grep sed dpkg && \
     apt-get clean && \
 # ==================================================================
-# misc
-# ------------------------------------------------------------------
-    conda install -y numpy h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter -c conda-forge && \
-# ==================================================================
 # opencv3
 # ------------------------------------------------------------------
-    conda install -y opencv -c anaconda && \
+    $CONDA_INSTALL opencv -c anaconda && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-    conda install -y tensorflow-gpu -c anaconda && \
+    $PIP_INSTALL tensorflow-gpu && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-    conda install -y pytorch torchvision -c pytorch && \
+    $CONDA_INSTALL pytorch torchvision -c pytorch && \
 # ==================================================================
 # mxnet
 # ------------------------------------------------------------------
-    conda install -y graphviz && \
-    pip install mxnet-cu100 mxboard gluoncv && \
+    $PIP_INSTALL mxnet-cu100 mxboard gluoncv && \
+# ==================================================================
+# misc
+# ------------------------------------------------------------------
+    $CONDA_INSTALL h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter -c conda-forge && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
-    pip install --upgrade tensorboardX protobuf==3.6.0 pip cupy && \
+    $PIP_INSTALL --upgrade tensorboardX pip cupy && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
@@ -70,7 +71,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 	apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/* && \
-    conda clean -y -c && \
+    conda clean --all && \
 # ==================================================================
 # jupyter notebook
 # ------------------------------------------------------------------

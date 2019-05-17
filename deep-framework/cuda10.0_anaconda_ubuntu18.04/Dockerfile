@@ -19,6 +19,8 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
 # Install some dependencies
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
+    PIP_INSTALL="pip install --no-cache-dir" && \
+    CONDA_INSTALL="conda install -y" && \
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
@@ -41,24 +43,23 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # opencv3
 # ------------------------------------------------------------------
-    conda install -y opencv -c anaconda && \
+    $CONDA_INSTALL opencv -c anaconda && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-    conda install -y tensorflow-gpu -c anaconda && \
+    $PIP_INSTALL tensorflow-gpu && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-    conda install -y pytorch torchvision -c pytorch && \
+    $CONDA_INSTALL pytorch torchvision -c pytorch && \
 # ==================================================================
 # mxnet
 # ------------------------------------------------------------------
-    conda install -y graphviz && \
-    pip install mxnet-cu100 mxboard gluoncv && \
+    $PIP_INSTALL mxnet-cu100 mxboard gluoncv && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
-    pip install --upgrade tensorboardX protobuf==3.6.0 pip easydict Cython cupy yacs && \
+    $PIP_INSTALL --upgrade tensorboardX pip easydict Cython cupy yacs && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
@@ -66,6 +67,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 	apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/* && \
+    conda clean --all && \
 # ==================================================================
 # jupyter notebook
 # ------------------------------------------------------------------
