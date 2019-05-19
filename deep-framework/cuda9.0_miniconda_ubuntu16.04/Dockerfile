@@ -48,7 +48,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-    $PIP_INSTALL tensorflow-gpu==${TENSORFLOW_VERSION} && \
+    $CONDA_INSTALL tensorflow-gpu=${TENSORFLOW_VERSION} -c anaconda && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
