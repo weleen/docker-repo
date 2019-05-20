@@ -11,11 +11,11 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/anaconda3/bin:$PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
-RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
-	cat /proc/driver/nvidia/version && \
-	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
-	nvcc -V && \
-	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
+# RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
+# 	cat /proc/driver/nvidia/version && \
+# 	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
+# 	nvcc -V && \
+# 	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
 
 # Install some dependencies
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
