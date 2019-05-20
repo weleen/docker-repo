@@ -5,23 +5,22 @@ LABEL maintainer "yimingwu <yimingwu@hotmail.com>"
 ARG TENSORFLOW_VERSION=1.12.0
 ARG PYTORCH_VERSION=latest
 ARG MXNET_VERSION=latest
+ARG OPENCV_VERSION=3.4.1
 ARG DEBIAN_FRONTEND=noninteractive 
 
 ENV JUPYTER_CONFIG_DIR=/opt/jupyter
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/miniconda/bin:$PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
-#RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
-#	cat /proc/driver/nvidia/version && \
-#	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
-#	nvcc -V && \
-#	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
+RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
+	cat /proc/driver/nvidia/version && \
+	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
+	nvcc -V && \
+	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
 
 # Install some dependencies
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="pip install --no-cache-dir" && \
-    CONDA_INSTALL="conda install -y" && \
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
@@ -29,30 +28,19 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client tree && \
-# ==================================================================
-# miniconda4 python3.6.5
-# ------------------------------------------------------------------
-    wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/miniconda && \
-    rm ~/miniconda.sh && \
-    ln -s /opt/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc && \
-    apt-get install -y curl grep sed dpkg && \
-    apt-get clean && \
+    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client tree python3.6 python3-pip curl grep sed dpkg && \
 # ==================================================================
 # opencv3
 # ------------------------------------------------------------------
-    $CONDA_INSTALL opencv -c anaconda && \
+    $PIP_INSTALL opencv-python==${OPENCV_VERSION} && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-    $CONDA_INSTALL tensorflow-gpu=${TENSORFLOW_VERSION} -c anaconda && \
+    $PIP_INSTALL tensorflow-gpu==${TENSORFLOW_VERSION} && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-    $CONDA_INSTALL pytorch torchvision -c pytorch && \
+    $PIP_INSTALL pytorch torchvision && \
 # ==================================================================
 # mxnet
 # ------------------------------------------------------------------
@@ -60,7 +48,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # misc
 # ------------------------------------------------------------------
-    $CONDA_INSTALL h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter -c conda-forge && \
+    $PIP_INSTALL h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
@@ -72,7 +60,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 	apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/* && \
-    conda clean --all && \
 # ==================================================================
 # jupyter notebook
 # ------------------------------------------------------------------
