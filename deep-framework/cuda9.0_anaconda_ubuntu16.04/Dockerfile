@@ -81,8 +81,8 @@ COPY sshd_config /etc/ssh/
 COPY run.sh /opt
 
 # ENTRYPOINT [ "/bin/bash", "run.sh", " && "]
-# Expose Ports for ssh (22), TensorBoard (6008), Ipython (8890)
-EXPOSE 22 6008 8890
+# Expose Ports for ssh (22), TensorBoard (6006), Ipython (8888)
+EXPOSE 22 6006 8888
 
 WORKDIR /root
 CMD ["/bin/bash"]
