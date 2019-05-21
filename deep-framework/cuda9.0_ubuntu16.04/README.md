@@ -4,6 +4,6 @@ Include
 - tensorflow-gpu=1.12.0
 - pytorch=latest
 - mxnet=latest
-- opencv3.4.0
+- opencv=latest
 - ubuntu16.04
 - miniconda4.5.12

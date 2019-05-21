@@ -5,7 +5,7 @@ LABEL maintainer "yimingwu <yimingwu@hotmail.com>"
 ARG TENSORFLOW_VERSION=latest
 ARG PYTORCH_VERSION=latest
 ARG MXNET_VERSION=latest
-ARG OPENCV_VERSION=3.4.1
+ARG OPENCV_VERSION=latest
 ARG DEBIAN_FRONTEND=noninteractive 
 
 ENV JUPYTER_CONFIG_DIR=/opt/jupyter
@@ -32,7 +32,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # opencv3
 # ------------------------------------------------------------------
-    $PIP_INSTALL opencv-python==${OPENCV_VERSION} && \
+    $PIP_INSTALL opencv-python && \
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
