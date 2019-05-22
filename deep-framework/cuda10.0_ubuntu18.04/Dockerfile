@@ -41,7 +41,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     python3.6 ~/get-pip.py && \
     ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
     ln -s /usr/bin/python3.6 /usr/local/bin/python && \
-    $PIP_INSTALL setuptools h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter cupy numpy cloudpickle && \
+    $PIP_INSTALL setuptools h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter cupy numpy cloudpickle tensorboardX && \
 # ==================================================================
 # opencv3
 # ------------------------------------------------------------------
@@ -59,10 +59,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # mxnet
 # ------------------------------------------------------------------
     $PIP_INSTALL mxnet-cu100 mxboard graphviz gluoncv && \
-# ==================================================================
-# extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
-# ------------------------------------------------------------------
-    $PIP_INSTALL --upgrade tensorboardX protobuf==3.6.0  && \
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
