@@ -20,7 +20,8 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
 # Install some dependencies
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
-    PIP_INSTALL="pip3 install --no-cache-dir" && \
+    PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    GIT_CLONE="git clone --depth 10" && \
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
@@ -28,7 +29,19 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-    $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip  build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client tree python3.6 python3-pip curl grep sed dpkg && \
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL cmake wget bzip2 ca-certificates git vim curl unzip build-essential libglib2.0-0 libxext6 libsm6 libxrender1 mercurial subversion openssh-server openssh-client tree curl grep sed dpkg && \
+# ==================================================================
+# python3.6
+# ------------------------------------------------------------------
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL python3.6 python3.6-dev python3-distutils-extra && \
+    wget -O ~/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    python3.6 ~/get-pip.py && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+    $PIP_INSTALL setuptools h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter cupy numpy cloudpickle && \
 # ==================================================================
 # opencv3
 # ------------------------------------------------------------------
@@ -40,15 +53,12 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-    $PIP_INSTALL pytorch torchvision && \
+    $PIP_INSTALL torch_nightly -f https://download.pytorch.org/whl/nightly/cu100/torch_nightly.html && \
+    $PIP_INSTALL torchvision_nightly && \
 # ==================================================================
 # mxnet
 # ------------------------------------------------------------------
-    $PIP_INSTALL mxnet-cu90 mxboard graphviz gluoncv && \
-# ==================================================================
-# misc
-# ------------------------------------------------------------------
-    $PIP_INSTALL h5py pandas pyyaml yacs cython scipy scikit-learn scikit-image easydict matplotlib jupyter pip cupy && \
+    $PIP_INSTALL mxnet-cu100 mxboard graphviz gluoncv && \
 # ==================================================================
 # extra bug for tensorboardX https://github.com/tensorflow/models/issues/3995
 # ------------------------------------------------------------------
