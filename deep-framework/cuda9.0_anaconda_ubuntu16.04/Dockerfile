@@ -85,4 +85,4 @@ COPY run.sh /opt
 EXPOSE 22 6006 8888
 
 WORKDIR /root
-CMD ["/bin/bash"]
+CMD ["/bin/bash", "/opt/run.sh"]
